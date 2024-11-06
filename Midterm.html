@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Fan Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        header nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        header nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Welcome to My Basketball Fan Page</h1>
+        <nav>
+            <ul>
+                <li><a href="#players">Favorite Players</a></li>
+                <li><a href="#scores">Latest Scores</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Favorite Players Section -->
+    <section id="players">
+        <h2>My Favorite Players</h2>
+        <p>Here are some of my favorite basketball players:</p>
+        <ul>
+            <li>LeBron James</li>
+            <li>Stephen Curry</li>
+            <li>Kevin Durant</li>
+        </ul>
+    </section>
+
+    <!-- Latest Scores Section -->
+    <section id="scores">
+        <h2>Latest NBA Scores</h2>
+        <div id="game-scores">
+            <p>Loading scores...</p>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>Created by [Ron Cedrick Vidal] | Basketball Fan</p>
+    </footer>
+
+    <!-- JavaScript for API Fetching -->
+    <script>
+        const API_URL = 'https://cors-anywhere.herokuapp.com/https://www.openligadb.de/api/v1/league/standard/4387/season/2024'; // Using CORS proxy
+
+        function fetchScores() {
+            fetch(API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log the raw data to check the structure
+        
+                    const scoresDiv = document.getElementById('game-scores');
+                    scoresDiv.innerHTML = '';  // Clear the loading message
+                    
+                    if (!data || data.length === 0) {
+                        scoresDiv.innerHTML = '<p>No games today.</p>';
+                    } else {
+                        data.forEach(game => {
+                            scoresDiv.innerHTML += `
+                                <div>
+                                    <h3>${game.homeTeam.teamName} vs ${game.awayTeam.teamName}</h3>
+                                    <p>Score: ${game.results[0].pointsHomeTeam} - ${game.results[0].pointsAwayTeam}</p>
+                                    <p>Game Date: ${game.dateTime}</p>
+                                </div>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('game-scores').innerHTML = '<p>Failed to load scores.</p>';
+                });
+        }
+
+        // Fetch the scores when the page is loaded
+        window.onload = fetchScores;
+    </script>
+
+</body>
+</html>
